@@ -25,4 +25,14 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/kyle678/portfolio:latest
+          # We now push both 'latest' and the specific Run ID for versioning
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/portfolio:latest
+            ghcr.io/${{ github.repository_owner }}/portfolio:${{ github.run_id }}
+
+      - name: Trigger Keel Update
+        run: |
+          # Sends the specific Run ID tag to Keel's native webhook endpoint
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"name": "ghcr.io/${{ github.repository_owner }}/portfolio", "tag": "${{ github.run_id }}"}' \
+          https://keel-webhook.thekyle.net/v1/webhooks/native
