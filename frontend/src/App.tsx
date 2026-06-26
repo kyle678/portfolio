@@ -18,7 +18,7 @@ function App() {
         <div>
           <h1>Get started</h1>
           <p>
-            Edit <code>src/App.tsx</code> and save to test <code>RAM</code>
+            Edit <code>src/App.tsx</code> and save to test <code>RAMD</code>
           </p>
         </div>
         <button
