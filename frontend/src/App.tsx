@@ -80,8 +80,10 @@ const links = [
 
 export default function App() {
   const [blink, setBlink] = useState(true);
+  /*
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredLink, setHoveredLink] = useState(null);
+  */
 
   useEffect(() => {
     const t = setInterval(() => setBlink((b) => !b), 530);
