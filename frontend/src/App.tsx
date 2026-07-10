@@ -21,52 +21,90 @@ const gradientText = {
   backgroundClip: "text",
 };
 
-const projects = [
+type Project = {
+  title: string;
+  subtitle: string;
+  desc: string;
+  tech: string[];
+  icon: string;
+  accent: string;
+  repo?: string;
+};
+
+const projects: Project[] = [
   {
-    title: "Secure Vault",
-    desc: "End-to-end encrypted desktop sync application with zero-knowledge architecture. Files never leave your machine unencrypted.",
-    tech: ["React", "Electron", "Flask", "AES-256"],
-    icon: "🔐",
-    accent: "#7C3AED",
-  },
-  {
-    title: "Gridsafe",
-    desc: "ML-powered log anomaly detector using XGBoost. Identifies threats in real time with sub-50ms latency on live streams.",
-    tech: ["Python", "XGBoost", "Docker"],
+    title: "GridSAFE",
+    subtitle: "Senior Capstone · Aug 2025 – May 2026",
+    desc: "AI-based anomaly detection for power-grid networks. Built a simulated grid network to generate realistic traffic and anomaly data, then trained an XGBoost model that caught 80% of anomalies — flagging faults and intrusions on critical infrastructure. Delivered with a 5-person multidisciplinary team.",
+    tech: ["Python", "XGBoost", "Machine Learning", "Networking"],
     icon: "🛡️",
     accent: "#F43F5E",
   },
-  /*
   {
-    title: "8-bit Crawler",
-    desc: "Procedural dungeon generator with BSP tree partitioning and pathfinding. Runs at 60fps with unlimited room complexity.",
-    tech: ["C++", "SDL3", "BSP Trees"],
-    icon: "🎮",
-    accent: "#F59E0B",
+    title: "Secure Vault",
+    subtitle: "Feb 2026 – May 2026",
+    desc: "Zero-knowledge encrypted cloud storage and password manager. A cross-platform desktop app that encrypts files and filenames client-side with AES-256-GCM before upload — the server only ever stores ciphertext. Envelope encryption with PBKDF2-wrapped data keys enables atomic password rotation and Shamir's Secret Sharing recovery, plus resumable chunked sync with a crash-safe state ledger.",
+    tech: ["Electron", "React", "Flask", "AWS S3", "AES-256-GCM"],
+    icon: "🔐",
+    accent: "#7C3AED",
+    repo: "https://github.com/kyle678/SecureFileVault",
   },
-  */
+  {
+    title: "LED-Flux",
+    subtitle: "Personal Project",
+    desc: "Real-time control system for 1,500-pixel WS2812B LED strips: a React web UI, Flask REST API, and Python render engine on Raspberry Pi communicating over UDP so HTTP latency can never stall the render loop. Includes a scene builder persisted to SQLite and a pytest suite that stubs the Pi hardware.",
+    tech: ["React", "Flask", "Raspberry Pi", "UDP", "SQLite"],
+    icon: "💡",
+    accent: "#F59E0B",
+    repo: "https://github.com/kyle678/LED-Flux",
+  },
+  {
+    title: "Self-Hosted Homelab",
+    subtitle: "Dec 2023 – Present",
+    desc: "Self-managed MicroK8s (Kubernetes) cluster on Linux hosting a media server, NAS, photo management, and public websites — including this one. GitHub Actions + Keel CI/CD roll out updates on every push; Cloudflare Tunnel provides public DNS, proxying, and TLS with no open inbound ports; Grafana and Prometheus monitor cluster health.",
+    tech: ["Kubernetes", "GitHub Actions", "Cloudflare Tunnel", "Grafana", "Prometheus"],
+    icon: "☸️",
+    accent: "#22D3EE",
+  },
+  {
+    title: "AES",
+    subtitle: "Personal Project",
+    desc: "Advanced Encryption Standard implementation in C, built to the NIST FIPS 197 specification. Supports 128, 192, and 256-bit keys and can encrypt and decrypt any file type.",
+    tech: ["C", "Cryptography", "NIST FIPS 197"],
+    icon: "🔏",
+    accent: "#7C3AED",
+    repo: "https://github.com/kyle678/AES",
+  },
 ];
 
 const skills = [
-  { label: "Languages", items: ["Python", "C++", "JavaScript", "TypeScript", "Bash", "SQL"] },
-  { label: "Security", items: ["Network Forensics", "Penetration Testing", "Encryption", "CVE Analysis"] },
-  { label: "Infrastructure", items: ["Docker", "Linux", "Nginx", "Proxmox", "Wireguard"] },
-  { label: "Frameworks", items: ["React", "Flask", "Node.js", "Electron", "SDL3"] },
+  { label: "Languages", items: ["Python", "Java", "C", "C++", "JavaScript", "TypeScript", "SQL", "Bash", "VHDL"] },
+  { label: "Frameworks & Tools", items: ["React", "Flask", "Electron", "Node.js", "Vite", "REST APIs", "pytest", "Git"] },
+  { label: "Cloud & DevOps", items: ["AWS (S3)", "Azure", "GCP", "Kubernetes (MicroK8s)", "Linux", "GitHub Actions", "Keel", "Grafana", "Prometheus"] },
+  { label: "Networking & Security", items: ["Cloudflare Tunnel", "AdGuard Home", "Wireshark", "Nmap", "Applied Cryptography"] },
+  { label: "Databases", items: ["MySQL", "SQLite", "NoSQL"] },
 ];
 
 const timeline = [
   {
     year: "2026",
     title: "B.S. Software Engineering, Minor in Cybersecurity",
-    org: "Iowa State University Graduate",
-    desc: "Focused on systems programming, network security, and distributed systems.",
+    org: "Iowa State University — Ames, IA",
+    desc: "Coursework in Cloud Computing, Network Security, Cryptography, Operating Systems, Data Structures & Algorithms, and Software Design.",
     type: "edu",
   },
   {
-    year: "2022",
-    title: "Homelab Infrastructure",
-    org: "Personal Project",
-    desc: "Built a 4-node Proxmox cluster running 20+ self-hosted services including private VPN, monitoring, and CI/CD.",
+    year: "2023 – now",
+    title: "Self-Hosted Kubernetes Platform",
+    org: "Homelab",
+    desc: "Designed, deployed, and maintain a MicroK8s cluster on Linux serving production-style services and public websites — end-to-end Linux administration, networking, CI/CD, monitoring, and recovery from hardware and service failures.",
+    type: "work",
+  },
+  {
+    year: "2022 – 2026",
+    title: "Dining Hall Supervisor",
+    org: "Iowa State University Dining",
+    desc: "Supervised a team of student staff during high-volume service, coordinating daily operations and resolving issues in real time while upholding health, safety, and quality standards.",
     type: "work",
   },
 ];
@@ -192,14 +230,14 @@ export default function App() {
             <span style={{ opacity: blink ? 1 : 0, color: COLORS.violet }}>▋</span>
           </div>
           <h1 style={{ margin: "0 0 8px", fontFamily: "'JetBrains Mono', monospace", fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 700, lineHeight: 1.1, textAlign: "left", ...gradientText }}>
-            Kyle
+            Kyle Maloney
           </h1>
           <p style={{ margin: "0 0 20px", fontSize: "1.1rem", color: COLORS.muted, fontWeight: 300, letterSpacing: "0.5px", textAlign: "left" }}>
-            Software Developer · Cloud & Security Enthusiast
+            Software Developer · Cloud, DevOps & Security
           </p>
           <p style={{ margin: 0, color: COLORS.muted, lineHeight: 1.8, maxWidth: "580px", fontSize: "0.95rem", textAlign: "left" }}>
-            Recent CS graduate building secure, scalable systems. I specialize in self-hosted infrastructure, 
-            network forensics, and optimized backend architecture.
+            Software Engineering graduate from Iowa State University (May 2026) with a minor in Cybersecurity.
+            I build secure full-stack systems and run the self-hosted Kubernetes platform that serves this site.
           </p>
 
           <div style={{ marginTop: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", gap: "10px", flexWrap: "wrap" }}>
@@ -218,11 +256,12 @@ export default function App() {
           <h2 className="section-title">Projects</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
             {projects.map((p, i) => {
-              const colorName = ["violet", "coral", "amber"][i];
+              const colorName = ["violet", "coral", "amber"][i % 3];
               return (
                 <div key={i} className={`project-card ${colorName}`}>
                   <div style={{ fontSize: "1.8rem", marginBottom: "14px" }}>{p.icon}</div>
-                  <h3 style={{ margin: "0 0 8px", fontSize: "1.05rem", fontWeight: 600 }}>{p.title}</h3>
+                  <h3 style={{ margin: "0 0 4px", fontSize: "1.05rem", fontWeight: 600 }}>{p.title}</h3>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: COLORS.subtle, marginBottom: "10px" }}>{p.subtitle}</div>
                   <p style={{ margin: "0 0 16px", fontSize: "0.875rem", color: COLORS.muted, lineHeight: 1.65 }}>{p.desc}</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                     {p.tech.map((t) => (
@@ -237,6 +276,16 @@ export default function App() {
                       }}>{t}</span>
                     ))}
                   </div>
+                  {p.repo && (
+                    <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{
+                      display: "inline-block",
+                      marginTop: "14px",
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: "0.75rem",
+                      color: p.accent,
+                      textDecoration: "none",
+                    }}>View source ↗</a>
+                  )}
                 </div>
               );
             })}
@@ -299,11 +348,11 @@ export default function App() {
         {/* ── CURRENTLY LEARNING ── */}
         <section style={{ marginBottom: "72px" }}>
           <div className="section-label">// now</div>
-          <h2 className="section-title">Currently Exploring</h2>
+          <h2 className="section-title">Currently Building</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
             {[
-              { topic: "Malware Analysis", detail: "Static & dynamic analysis of real-world samples in isolated environments", color: COLORS.violet },
-              { topic: "Kubernetes", detail: "Orchestrating self-hosted services with k3s on bare metal", color: COLORS.amber },
+              { topic: "Desktop Sticky Notes", detail: "A Windows sticky-notes app in C# (.NET 8, WPF) — global hotkeys, rich text, system-tray integration, and auto-updates from GitHub Releases", color: COLORS.violet },
+              { topic: "Cloud & Security", detail: "Building on Secure Vault and GridSAFE — client-side cryptography, AWS architecture, and anomaly detection for critical infrastructure", color: COLORS.amber },
             ].map((item, i) => (
               <div key={i} style={{
                 background: COLORS.surface,
