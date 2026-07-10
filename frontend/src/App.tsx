@@ -80,8 +80,8 @@ const projects: Project[] = [
 const skills = [
   { label: "Languages", items: ["Python", "Java", "C", "C++", "JavaScript", "TypeScript", "SQL", "Bash", "VHDL"] },
   { label: "Frameworks & Tools", items: ["React", "Flask", "Electron", "Node.js", "Vite", "REST APIs", "pytest", "Git"] },
-  { label: "Cloud & DevOps", items: ["AWS (S3)", "Azure", "GCP", "Kubernetes (MicroK8s)", "Linux", "GitHub Actions", "Keel", "Grafana", "Prometheus"] },
-  { label: "Networking & Security", items: ["Cloudflare Tunnel", "AdGuard Home", "Wireshark", "Nmap", "Applied Cryptography"] },
+  { label: "Cloud & DevOps", items: ["AWS (S3)", "Azure", "GCP", "Kubernetes (MicroK8s)", "Terraform", "Linux", "GitHub Actions", "Keel", "Grafana", "Prometheus"] },
+  { label: "Networking & Security", items: ["Cloudflare Tunnel", "AdGuard Home", "Wireshark", "Nmap", "Applied Cryptography", "Terrascan"] },
   { label: "Databases", items: ["MySQL", "SQLite", "NoSQL"] },
 ];
 
