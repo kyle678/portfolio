@@ -279,6 +279,8 @@ export default function App() {
                   {p.repo && (
                     <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{
                       display: "inline-block",
+                      position: "relative",
+                      zIndex: 10,
                       marginTop: "14px",
                       fontFamily: "'JetBrains Mono', monospace",
                       fontSize: "0.75rem",
