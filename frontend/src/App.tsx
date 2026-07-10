@@ -351,8 +351,16 @@ export default function App() {
           <h2 className="section-title">Currently Building</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
             {[
-              { topic: "Desktop Sticky Notes", detail: "A Windows sticky-notes app in C# (.NET 8, WPF) — global hotkeys, rich text, system-tray integration, and auto-updates from GitHub Releases", color: COLORS.violet },
-              { topic: "Cloud & Security", detail: "Building on Secure Vault and GridSAFE — client-side cryptography, AWS architecture, and anomaly detection for critical infrastructure", color: COLORS.amber },
+              { 
+                topic: "Desktop Sticky Notes",
+                detail: "A Windows sticky-notes app in C# (.NET 8, WPF) — global hotkeys, rich text, system-tray integration, and auto-updates from GitHub Releases",
+                color: COLORS.violet
+              },
+              { 
+                topic: "Gamers Unite", 
+                detail: "A React-based web application facilitating user matchmaking and community engagement, featuring seamless Discord API integration for real-time communication.", 
+                color: COLORS.amber 
+              },
             ].map((item, i) => (
               <div key={i} style={{
                 background: COLORS.surface,
