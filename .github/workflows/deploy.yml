@@ -25,7 +25,6 @@ jobs:
         with:
           context: ./frontend
           push: true
-          # We now push both 'latest' and the specific Run ID for versioning
           tags: |
             ghcr.io/${{ github.repository_owner }}/portfolio:latest
             ghcr.io/${{ github.repository_owner }}/portfolio:${{ github.run_id }}
