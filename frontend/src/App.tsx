@@ -29,6 +29,7 @@ type Project = {
   icon: string;
   accent: string;
   repo?: string;
+  live?: string;
 };
 
 const projects: Project[] = [
@@ -48,6 +49,16 @@ const projects: Project[] = [
     icon: "🔐",
     accent: "#7C3AED",
     repo: "https://github.com/kyle678/SecureFileVault",
+  },
+  {
+    title: "Gamers Unite",
+    subtitle: "Live at gamersunite.us · 2026",
+    desc: "Matchmaking for games that don't have it. Players form parties with game, mode, region, and skill parameters; the moment a party fills, a Discord bot spins up a private voice channel locked to its members and DMs everyone the link. Discord-only auth, mutual blocking and reporting for community safety, and a background sweeper that reaps expired parties and channels.",
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "Discord API"],
+    icon: "🎮",
+    accent: "#F59E0B",
+    repo: "https://github.com/kyle678-labs/GamersUnite",
+    live: "https://gamersunite.us",
   },
   {
     title: "LED-Flux",
@@ -303,17 +314,25 @@ export default function App() {
                       }}>{t}</span>
                     ))}
                   </div>
-                  {p.repo && (
-                    <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{
-                      display: "inline-block",
-                      position: "relative",
-                      zIndex: 10,
-                      marginTop: "14px",
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: "0.75rem",
-                      color: p.accent,
-                      textDecoration: "none",
-                    }}>View source ↗</a>
+                  {(p.live || p.repo) && (
+                    <div style={{ display: "flex", gap: "16px", marginTop: "14px", position: "relative", zIndex: 10 }}>
+                      {p.live && (
+                        <a href={p.live} target="_blank" rel="noopener noreferrer" style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: "0.75rem",
+                          color: p.accent,
+                          textDecoration: "none",
+                        }}>Visit site ↗</a>
+                      )}
+                      {p.repo && (
+                        <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: "0.75rem",
+                          color: p.accent,
+                          textDecoration: "none",
+                        }}>View source ↗</a>
+                      )}
+                    </div>
                   )}
                 </div>
               );
@@ -380,12 +399,6 @@ export default function App() {
           <h2 className="section-title">Currently Building</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
             {[
-              {
-                topic: "Gamers Unite",
-                detail: "Matchmaking for games that don't have it: players form parties with game, region, and skill parameters, and when a party fills, a Discord bot spins up a private voice channel locked to its members. Next.js 15, Tailwind CSS 4, Prisma + SQLite, Discord OAuth.",
-                color: COLORS.amber,
-                repo: "https://github.com/kyle678-labs/GamersUnite",
-              },
               {
                 topic: "Discord Manager",
                 detail: "A discord.js bot that receives GitHub webhooks over HTTP and posts CI results, pushes, and releases to a Discord channel as rich embeds — it powers the build notifications for this site.",
