@@ -59,12 +59,39 @@ const projects: Project[] = [
     repo: "https://github.com/kyle678/LED-Flux",
   },
   {
+    title: "Desktop Sticky Notes",
+    subtitle: "Personal Project · 2026",
+    desc: "Windows sticky-notes app in C# (.NET 8, WPF) that lives in the system tray and summons notes with global hotkeys. Rich text and image paste, note groups with per-workspace show/hide, a Notes Manager with 7-day recovery for deleted notes, continuous autosave, and one-click auto-updates from GitHub Releases via an Inno Setup installer.",
+    tech: ["C#", ".NET 8", "WPF", "Inno Setup"],
+    icon: "🗒️",
+    accent: "#7C3AED",
+    repo: "https://github.com/kyle678/desktopStickyNotes",
+  },
+  {
+    title: "openMouseKeyboard",
+    subtitle: "Personal Project · 2026",
+    desc: "Software KVM switch for Windows, written in Rust: share one mouse and keyboard between two PCs over the LAN — no extra hardware, no cloud. Low-level input hooks capture events and stream them over TCP as relative deltas, UDP broadcast auto-discovers the other machine, and pushing the cursor past the screen edge hands control across. Includes bidirectional clipboard sync and a tray-icon UI in a single ~1 MB executable.",
+    tech: ["Rust", "Windows API", "TCP/UDP", "Systems Programming"],
+    icon: "🖱️",
+    accent: "#F43F5E",
+    repo: "https://github.com/kyle678/openMouseKeyboard",
+  },
+  {
     title: "Self-Hosted Homelab",
     subtitle: "Dec 2023 – Present",
     desc: "Self-managed MicroK8s (Kubernetes) cluster on Linux hosting a media server, NAS, photo management, and public websites — including this one. GitHub Actions + Keel CI/CD roll out updates on every push; Cloudflare Tunnel provides public DNS, proxying, and TLS with no open inbound ports; Grafana and Prometheus monitor cluster health.",
     tech: ["Kubernetes", "GitHub Actions", "Cloudflare Tunnel", "Grafana", "Prometheus"],
     icon: "☸️",
     accent: "#22D3EE",
+  },
+  {
+    title: "Personal Journal",
+    subtitle: "Personal Project · 2026",
+    desc: "Password-protected journal app with a React frontend, Flask backend, and SQLite storage. Markdown entries autosave as you type and are searchable by title and content. Auth uses a scrypt-hashed password, HttpOnly session cookies, and a per-IP lockout after repeated failed attempts.",
+    tech: ["React", "Flask", "SQLite", "scrypt"],
+    icon: "📓",
+    accent: "#22D3EE",
+    repo: "https://github.com/kyle678-labs/personal-journal",
   },
   {
     title: "AES",
@@ -78,7 +105,7 @@ const projects: Project[] = [
 ];
 
 const skills = [
-  { label: "Languages", items: ["Python", "Java", "C", "C++", "JavaScript", "TypeScript", "SQL", "Bash", "VHDL"] },
+  { label: "Languages", items: ["Python", "Java", "C", "C++", "C#", "Rust", "JavaScript", "TypeScript", "SQL", "Bash", "VHDL"] },
   { label: "Frameworks & Tools", items: ["React", "Flask", "Electron", "Node.js", "Vite", "REST APIs", "pytest", "Git"] },
   { label: "Cloud & DevOps", items: ["AWS (S3)", "Azure", "GCP", "Kubernetes (MicroK8s)", "Terraform", "Linux", "GitHub Actions", "Keel", "Grafana", "Prometheus"] },
   { label: "Networking & Security", items: ["Cloudflare Tunnel", "AdGuard Home", "Wireshark", "Nmap", "Applied Cryptography", "Terrascan"] },
@@ -353,15 +380,17 @@ export default function App() {
           <h2 className="section-title">Currently Building</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
             {[
-              { 
-                topic: "Desktop Sticky Notes",
-                detail: "A Windows sticky-notes app in C# (.NET 8, WPF) — global hotkeys, rich text, system-tray integration, and auto-updates from GitHub Releases",
-                color: COLORS.violet
+              {
+                topic: "Gamers Unite",
+                detail: "Matchmaking for games that don't have it: players form parties with game, region, and skill parameters, and when a party fills, a Discord bot spins up a private voice channel locked to its members. Next.js 15, Tailwind CSS 4, Prisma + SQLite, Discord OAuth.",
+                color: COLORS.amber,
+                repo: "https://github.com/kyle678-labs/GamersUnite",
               },
-              { 
-                topic: "Gamers Unite", 
-                detail: "A React-based web application facilitating user matchmaking and community engagement, featuring seamless Discord API integration for real-time communication.", 
-                color: COLORS.amber 
+              {
+                topic: "Discord Manager",
+                detail: "A discord.js bot that receives GitHub webhooks over HTTP and posts CI results, pushes, and releases to a Discord channel as rich embeds — it powers the build notifications for this site.",
+                color: COLORS.coral,
+                repo: "https://github.com/kyle678-labs/discordManager",
               },
             ].map((item, i) => (
               <div key={i} style={{
@@ -373,6 +402,16 @@ export default function App() {
               }}>
                 <div style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: "6px" }}>{item.topic}</div>
                 <div style={{ color: COLORS.muted, fontSize: "0.8rem", lineHeight: 1.6 }}>{item.detail}</div>
+                {item.repo && (
+                  <a href={item.repo} target="_blank" rel="noopener noreferrer" style={{
+                    display: "inline-block",
+                    marginTop: "12px",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: "0.75rem",
+                    color: item.color,
+                    textDecoration: "none",
+                  }}>View source ↗</a>
+                )}
               </div>
             ))}
           </div>
