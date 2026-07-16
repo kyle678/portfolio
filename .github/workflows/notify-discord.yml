@@ -1,0 +1,43 @@
+name: Discord notification
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ "$CONCLUSION" = "success" ]; then
+            COLOR=3066993   # green
+            EMOJI="✅"
+          elif [ "$CONCLUSION" = "failure" ]; then
+            COLOR=15158332  # red
+            EMOJI="❌"
+          else
+            COLOR=9807270   # grey
+            EMOJI="🚫"
+          fi
+
+          curl -sS -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @- <<EOF
+          {
+            "embeds": [{
+              "title": "$EMOJI $WORKFLOW_NAME: $CONCLUSION",
+              "url": "$RUN_URL",
+              "description": "**$REPO** on \`$BRANCH\`",
+              "color": $COLOR
+            }]
+          }
+          EOF
