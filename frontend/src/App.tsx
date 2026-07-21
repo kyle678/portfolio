@@ -1,25 +1,59 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 
-const COLORS = {
-  bg: "#080C14",
-  surface: "#0F1624",
-  card: "#111827",
-  cardBorder: "#1E293B",
-  violet: "#7C3AED",
-  coral: "#F43F5E",
-  amber: "#F59E0B",
-  cyan: "#22D3EE",
-  text: "#F1F5F9",
-  muted: "#94A3B8",
-  subtle: "#64748B",
+type Palette = {
+  paper: string;
+  panel: string;
+  ink: string;
+  line: string;
+  mute: string;
+  faint: string;
+  red: string;
+  teal: string;
 };
 
-const gradientText = {
-  background: "linear-gradient(135deg, #7C3AED 0%, #F43F5E 50%, #F59E0B 100%)",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-  backgroundClip: "text",
+const THEMES: Record<string, { name: string; c: Palette }> = {
+  paper: {
+    name: "Paper",
+    c: {
+      paper: "#F1EBDA",
+      panel: "#E7E0CC",
+      ink: "#20201A",
+      line: "#CEC5AE",
+      mute: "#6E6757",
+      faint: "#98907C",
+      red: "#E03E1A",
+      teal: "#127A6A",
+    },
+  },
+  carbon: {
+    name: "Carbon",
+    c: {
+      paper: "#141310",
+      panel: "#1D1B15",
+      ink: "#ECE6D6",
+      line: "#302D26",
+      mute: "#9A9282",
+      faint: "#6C675A",
+      red: "#FF5C34",
+      teal: "#33BEA6",
+    },
+  },
+  midnight: {
+    name: "Midnight",
+    c: {
+      paper: "#080C14",
+      panel: "#0F1624",
+      ink: "#F1F5F9",
+      line: "#1E293B",
+      mute: "#94A3B8",
+      faint: "#64748B",
+      red: "#8B5CF6",
+      teal: "#22D3EE",
+    },
+  },
 };
+
+const THEME_ORDER = ["paper", "carbon", "midnight"];
 
 type Project = {
   title: string;
@@ -147,190 +181,248 @@ const timeline = [
   },
 ];
 
-const links = [
-  { label: "GitHub", href: "https://github.com/kyle678", icon: "⌥" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/kyle-maloney-3641501b9", icon: "in" },
-  { label: "Resume", target: "_blank", href: "Kyle_Maloney_Resume.pdf", icon: "↓" },
-  { label: "Email", href: "mailto:ktmaloney115@gmail.com", icon: "@" },
+const building = [
+  {
+    topic: "Discord Manager",
+    detail: "A discord.js bot that receives GitHub webhooks over HTTP and posts CI results, pushes, and releases to a Discord channel as rich embeds — it powers the build notifications for this site.",
+    repo: "https://github.com/kyle678-labs/discordManager",
+  },
 ];
+
+const links = [
+  { label: "GitHub", href: "https://github.com/kyle678", tag: "GH" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/kyle-maloney-3641501b9", tag: "IN" },
+  { label: "Resume", target: "_blank", href: "Kyle_Maloney_Resume.pdf", tag: "PDF" },
+  { label: "Email", href: "mailto:ktmaloney115@gmail.com", tag: "@" },
+];
+
+function SectionHead({ index, title, note, c }: { index: string; title: string; note?: string; c: Palette }) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "36px" }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.8rem", fontWeight: 700, color: c.red, letterSpacing: "1px" }}>{index}</span>
+      <h2 style={{ margin: 0, fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(1.4rem, 3vw, 1.9rem)", fontWeight: 700, letterSpacing: "-0.5px", color: c.ink, whiteSpace: "nowrap" }}>
+        {title}
+      </h2>
+      <span style={{ flex: 1, height: "1px", background: c.line, transform: "translateY(-4px)" }} />
+      {note && (
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: c.faint, letterSpacing: "1px", whiteSpace: "nowrap" }}>{note}</span>
+      )}
+    </div>
+  );
+}
 
 export default function App() {
   const [blink, setBlink] = useState(true);
-  /*
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [hoveredLink, setHoveredLink] = useState(null);
-  */
+  const [theme, setTheme] = useState<string>(() => {
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem("km-theme") : null;
+    if (saved && THEMES[saved]) return saved;
+    const prefersDark = typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "carbon" : "paper";
+  });
+
+  const C = THEMES[theme].c;
 
   useEffect(() => {
     const t = setInterval(() => setBlink((b) => !b), 530);
     return () => clearInterval(t);
   }, []);
 
-  return (
-    <div style={{ backgroundColor: COLORS.bg, minHeight: "100vh", color: COLORS.text, fontFamily: "'Inter', system-ui, sans-serif", padding: "0 20px 80px" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
-        * { box-sizing: border-box; text-align: left; }
-        ::selection { background: #7C3AED44; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #080C14; }
-        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+  useEffect(() => {
+    window.localStorage.setItem("km-theme", theme);
+  }, [theme]);
 
-        .project-card {
-          background: #111827;
-          border: 1px solid #1E293B;
-          border-radius: 16px;
-          padding: 24px;
-          transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-          cursor: default;
-          position: relative;
-          overflow: hidden;
+  return (
+    <div style={{ background: C.paper, minHeight: "100vh", color: C.ink }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        * { box-sizing: border-box; }
+        html, body { margin: 0; }
+        body {
+          font-family: 'Inter', system-ui, sans-serif;
+          color: ${C.ink};
+          background: ${C.paper};
+          background-image:
+            linear-gradient(${C.line}55 1px, transparent 1px),
+            linear-gradient(90deg, ${C.line}55 1px, transparent 1px);
+          background-size: 26px 26px;
+          background-position: -1px -1px;
         }
-        .project-card::before {
+        ::selection { background: ${C.red}; color: ${C.paper}; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: ${C.paper}; }
+        ::-webkit-scrollbar-thumb { background: ${C.line}; border: 3px solid ${C.paper}; }
+
+        a { color: inherit; }
+
+        .entry {
+          position: relative;
+          border: 1px solid ${C.line};
+          background: ${C.paper};
+          padding: 22px 22px 20px;
+          transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+        }
+        .entry::before {
           content: '';
           position: absolute;
-          inset: 0;
-          border-radius: 16px;
+          left: -1px; top: -1px; bottom: -1px;
+          width: 3px;
+          background: var(--edge);
           opacity: 0;
-          transition: opacity 0.3s ease;
+          transition: opacity 0.18s ease;
         }
-        .project-card:hover {
-          transform: translateY(-4px);
-        }
-        .project-card.violet:hover { border-color: #7C3AED55; box-shadow: 0 8px 30px #7C3AED22; }
-        .project-card.coral:hover  { border-color: #F43F5E55; box-shadow: 0 8px 30px #F43F5E22; }
-        .project-card.amber:hover  { border-color: #F59E0B55; box-shadow: 0 8px 30px #F59E0B22; }
-
-        .skill-pill {
-          font-size: 0.75rem;
-          padding: 4px 12px;
-          border-radius: 20px;
-          border: 1px solid #1E293B;
-          background: #0F1624;
-          color: #94A3B8;
-          transition: all 0.15s ease;
-          cursor: default;
-          font-family: 'JetBrains Mono', monospace;
-        }
-        .skill-pill:hover {
-          border-color: #7C3AED88;
-          color: #C4B5FD;
-          background: #7C3AED11;
-        }
-
-        .link-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 10px 20px;
-          border-radius: 10px;
-          border: 1px solid #1E293B;
-          background: #0F1624;
-          color: #94A3B8;
-          text-decoration: none;
-          font-size: 0.875rem;
-          font-weight: 500;
-          line-height: 1;
-          transition: all 0.2s ease;
-          cursor: pointer;
-          vertical-align: middle;
-        }
-        .link-btn:hover {
-          border-color: #7C3AED;
-          color: #C4B5FD;
-          background: #7C3AED15;
+        .entry:hover {
+          border-color: ${C.ink};
+          background: ${C.panel};
           transform: translateY(-2px);
         }
+        .entry:hover::before { opacity: 1; }
 
-        .section-label {
+        .chip {
           font-family: 'JetBrains Mono', monospace;
-          font-size: 0.7rem;
-          letter-spacing: 3px;
+          font-size: 0.68rem;
+          padding: 3px 8px;
+          border: 1px solid ${C.line};
+          color: ${C.mute};
+          background: ${C.paper};
+          white-space: nowrap;
+        }
+
+        .src {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.72rem;
+          font-weight: 500;
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: border-color 0.15s ease;
+        }
+        .src:hover { border-bottom-color: currentColor; }
+
+        .navlink {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.78rem;
+          text-decoration: none;
+          color: ${C.ink};
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 14px;
+          border: 1px solid ${C.line};
+          background: ${C.paper};
+          transition: all 0.16s ease;
+        }
+        .navlink:hover {
+          border-color: ${C.ink};
+          background: ${C.ink};
+          color: ${C.paper};
+        }
+        .navlink:hover .navtag { color: ${C.red}; }
+        .navtag { color: ${C.red}; font-weight: 700; font-size: 0.68rem; }
+
+        .skillrow { border-top: 1px solid ${C.line}; }
+        .skillrow:last-child { border-bottom: 1px solid ${C.line}; }
+
+        .themeswitch {
+          display: inline-flex;
+          border: 1px solid ${C.line};
+        }
+        .themeseg {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 1px;
           text-transform: uppercase;
-          color: #64748B;
-          margin-bottom: 8px;
+          padding: 6px 10px;
+          border: none;
+          border-left: 1px solid ${C.line};
+          background: transparent;
+          color: ${C.faint};
+          cursor: pointer;
+          transition: color 0.15s ease, background 0.15s ease;
         }
-        .section-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #F1F5F9;
-          margin: 0 0 32px;
-        }
+        .themeseg:first-child { border-left: none; }
+        .themeseg:hover { color: ${C.ink}; }
+        .themeseg.active { background: ${C.ink}; color: ${C.paper}; }
       `}</style>
 
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "980px", margin: "0 auto", padding: "0 24px 90px" }}>
 
-        {/* ── HERO ── */}
-        <header style={{ padding: "80px 0 60px", borderBottom: `1px solid ${COLORS.cardBorder}`, marginBottom: "64px", textAlign: "left" }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.8rem", color: COLORS.subtle, marginBottom: "20px", textAlign: "left" }}>
-            <span style={{ color: COLORS.violet }}>~/</span>portfolio
-            <span style={{ opacity: blink ? 1 : 0, color: COLORS.violet }}>▋</span>
+        {/* ── TOP BAR ── */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap", padding: "18px 0", borderBottom: `1px solid ${C.ink}`, fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", letterSpacing: "1px" }}>
+          <span style={{ fontWeight: 700 }}>K·T·M</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <span style={{ color: C.mute, whiteSpace: "nowrap" }}>
+              <span style={{ color: C.teal }}>●</span> OPEN TO WORK — JULY 2026
+            </span>
+            <div className="themeswitch" role="group" aria-label="Color theme">
+              {THEME_ORDER.map((t) => (
+                <button
+                  key={t}
+                  className={`themeseg${t === theme ? " active" : ""}`}
+                  onClick={() => setTheme(t)}
+                  aria-pressed={t === theme}
+                >
+                  {THEMES[t].name}
+                </button>
+              ))}
+            </div>
           </div>
-          <h1 style={{ margin: "0 0 8px", fontFamily: "'JetBrains Mono', monospace", fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 700, lineHeight: 1.1, textAlign: "left", ...gradientText }}>
-            Kyle Maloney
+        </div>
+
+        {/* ── MASTHEAD ── */}
+        <header style={{ padding: "56px 0 44px", borderBottom: `1px solid ${C.line}`, display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: "20px" }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem", color: C.faint, letterSpacing: "2px" }}>
+            PORTFOLIO / No. 2026 — AMES, IOWA
+            <span style={{ opacity: blink ? 1 : 0, color: C.red }}> ▍</span>
+          </div>
+          <h1 style={{ margin: 0, fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(3rem, 10vw, 6rem)", fontWeight: 700, lineHeight: 0.95, letterSpacing: "-2.5px" }}>
+            Kyle<br />Maloney<span style={{ color: C.red }}>.</span>
           </h1>
-          <p style={{ margin: "0 0 20px", fontSize: "1.1rem", color: COLORS.muted, fontWeight: 300, letterSpacing: "0.5px", textAlign: "left" }}>
-            Software Developer · Cloud, DevOps & Security
-          </p>
-          <p style={{ margin: 0, color: COLORS.muted, lineHeight: 1.8, maxWidth: "580px", fontSize: "0.95rem", textAlign: "left" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.82rem", color: C.ink }}>
+            <span style={{ borderBottom: `2px solid ${C.red}`, paddingBottom: "2px" }}>SOFTWARE ENGINEER</span>
+            <span style={{ color: C.faint }}>/</span>
+            <span style={{ borderBottom: `2px solid ${C.teal}`, paddingBottom: "2px" }}>CLOUD · DEVOPS · SECURITY</span>
+          </div>
+          <p style={{ margin: "8px 0 0", color: C.mute, lineHeight: 1.7, maxWidth: "560px", fontSize: "1rem" }}>
             Software Engineering graduate from Iowa State University (May 2026) with a minor in Cybersecurity.
             I build secure full-stack systems and run the self-hosted Kubernetes platform that serves this site.
           </p>
-
-          <div style={{ marginTop: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", gap: "10px", flexWrap: "wrap" }}>
+          <div style={{ marginTop: "14px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
             {links.map((l) => (
-              <a key={l.label} href={l.href} target={l.target || "_self"} rel="noopener noreferrer" className="link-btn">
-                <span style={{ fontFamily: "monospace", fontSize: "0.8rem", opacity: 0.6 }}>{l.icon}</span>
-                {l.label}
+              <a key={l.label} href={l.href} target={l.target || "_self"} rel="noopener noreferrer" className="navlink">
+                <span className="navtag">{l.tag}</span>{l.label}
               </a>
             ))}
           </div>
         </header>
 
         {/* ── PROJECTS ── */}
-        <section style={{ marginBottom: "72px" }}>
-          <div className="section-label">// work</div>
-          <h2 className="section-title">Projects</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
+        <section style={{ paddingTop: "64px" }}>
+          <SectionHead index="01" title="Selected Work" note={`${projects.length} ENTRIES`} c={C} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1px", background: C.line, border: `1px solid ${C.line}` }}>
             {projects.map((p, i) => {
-              const colorName = ["violet", "coral", "amber"][i % 3];
+              const edge = i % 2 === 0 ? C.red : C.teal;
               return (
-                <div key={i} className={`project-card ${colorName}`}>
-                  <div style={{ fontSize: "1.8rem", marginBottom: "14px" }}>{p.icon}</div>
-                  <h3 style={{ margin: "0 0 4px", fontSize: "1.05rem", fontWeight: 600 }}>{p.title}</h3>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: COLORS.subtle, marginBottom: "10px" }}>{p.subtitle}</div>
-                  <p style={{ margin: "0 0 16px", fontSize: "0.875rem", color: COLORS.muted, lineHeight: 1.65 }}>{p.desc}</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                <div key={i} className="entry" style={{ "--edge": edge, border: "none" } as CSSProperties}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", fontWeight: 700, color: edge, letterSpacing: "1px" }}>
+                      P-{String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>{p.icon}</span>
+                  </div>
+                  <h3 style={{ margin: "0 0 4px", fontFamily: "'Space Grotesk', sans-serif", fontSize: "1.35rem", fontWeight: 700, letterSpacing: "-0.5px" }}>{p.title}</h3>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: C.faint, marginBottom: "12px" }}>{p.subtitle}</div>
+                  <p style={{ margin: "0 0 16px", fontSize: "0.875rem", color: C.mute, lineHeight: 1.6 }}>{p.desc}</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: (p.live || p.repo) ? "16px" : 0 }}>
                     {p.tech.map((t) => (
-                      <span key={t} style={{
-                        fontSize: "0.7rem",
-                        padding: "3px 10px",
-                        borderRadius: "20px",
-                        border: `1px solid ${p.accent}44`,
-                        color: p.accent,
-                        background: `${p.accent}11`,
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}>{t}</span>
+                      <span key={t} className="chip">{t}</span>
                     ))}
                   </div>
                   {(p.live || p.repo) && (
-                    <div style={{ display: "flex", gap: "16px", marginTop: "14px", position: "relative", zIndex: 10 }}>
+                    <div style={{ display: "flex", gap: "18px", borderTop: `1px solid ${C.line}`, paddingTop: "12px" }}>
                       {p.live && (
-                        <a href={p.live} target="_blank" rel="noopener noreferrer" style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: "0.75rem",
-                          color: p.accent,
-                          textDecoration: "none",
-                        }}>Visit site ↗</a>
+                        <a href={p.live} target="_blank" rel="noopener noreferrer" className="src" style={{ color: C.teal }}>↗ VISIT SITE</a>
                       )}
                       {p.repo && (
-                        <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: "0.75rem",
-                          color: p.accent,
-                          textDecoration: "none",
-                        }}>View source ↗</a>
+                        <a href={p.repo} target="_blank" rel="noopener noreferrer" className="src" style={{ color: C.ink }}>↗ SOURCE</a>
                       )}
                     </div>
                   )}
@@ -341,18 +433,17 @@ export default function App() {
         </section>
 
         {/* ── SKILLS ── */}
-        <section style={{ marginBottom: "72px" }}>
-          <div className="section-label">// tools</div>
-          <h2 className="section-title">Skills & Stack</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "32px" }}>
+        <section style={{ paddingTop: "72px" }}>
+          <SectionHead index="02" title="Stack" note="TOOLS & LANGUAGES" c={C} />
+          <div>
             {skills.map((group) => (
-              <div key={group.label}>
-                <div style={{ fontSize: "0.7rem", fontFamily: "'JetBrains Mono', monospace", color: COLORS.violet, letterSpacing: "2px", marginBottom: "12px", textTransform: "uppercase" }}>
+              <div key={group.label} className="skillrow" style={{ display: "grid", gridTemplateColumns: "minmax(140px, 200px) 1fr", gap: "20px", padding: "18px 4px", alignItems: "start" }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.78rem", fontWeight: 700, color: C.ink, letterSpacing: "0.5px" }}>
                   {group.label}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                   {group.items.map((item) => (
-                    <span key={item} className="skill-pill">{item}</span>
+                    <span key={item} className="chip">{item}</span>
                   ))}
                 </div>
               </div>
@@ -361,69 +452,37 @@ export default function App() {
         </section>
 
         {/* ── TIMELINE ── */}
-        <section style={{ marginBottom: "72px" }}>
-          <div className="section-label">// history</div>
-          <h2 className="section-title">Experience & Education</h2>
-          <div style={{ position: "relative", paddingLeft: "32px" }}>
-            {/* vertical line */}
-            <div style={{ position: "absolute", left: "7px", top: "6px", bottom: "6px", width: "1px", background: `linear-gradient(to bottom, ${COLORS.violet}, ${COLORS.coral}, ${COLORS.cardBorder})` }} />
+        <section style={{ paddingTop: "72px" }}>
+          <SectionHead index="03" title="Trajectory" note="EDUCATION & WORK" c={C} />
+          <div>
             {timeline.map((item, i) => (
-              <div key={i} style={{ position: "relative", marginBottom: i < timeline.length - 1 ? "36px" : 0 }}>
-                {/* dot */}
-                <div style={{
-                  position: "absolute",
-                  left: "-32px",
-                  top: "4px",
-                  width: "14px",
-                  height: "14px",
-                  borderRadius: "50%",
-                  border: `2px solid ${i === 0 ? COLORS.violet : i === 1 ? COLORS.coral : COLORS.amber}`,
-                  background: COLORS.bg,
-                }} />
-                <div style={{ display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "6px" }}>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem", color: COLORS.subtle }}>{item.year}</span>
-                  <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>{item.title}</h3>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "24px", padding: "22px 4px", borderTop: `1px solid ${C.line}`, borderBottom: i === timeline.length - 1 ? `1px solid ${C.line}` : "none" }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.8rem", fontWeight: 700, color: item.type === "edu" ? C.red : C.teal, paddingTop: "3px" }}>
+                  {item.year}
                 </div>
-                <div style={{ fontSize: "0.8rem", color: i === 0 ? COLORS.violet : i === 1 ? COLORS.coral : COLORS.amber, marginBottom: "6px", fontWeight: 500 }}>
-                  {item.org}
+                <div>
+                  <h3 style={{ margin: "0 0 4px", fontFamily: "'Space Grotesk', sans-serif", fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-0.3px" }}>{item.title}</h3>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem", color: C.mute, marginBottom: "8px" }}>{item.org}</div>
+                  <p style={{ margin: 0, color: C.mute, fontSize: "0.9rem", lineHeight: 1.6 }}>{item.desc}</p>
                 </div>
-                <p style={{ margin: 0, color: COLORS.muted, fontSize: "0.875rem", lineHeight: 1.65 }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── CURRENTLY LEARNING ── */}
-        <section style={{ marginBottom: "72px" }}>
-          <div className="section-label">// now</div>
-          <h2 className="section-title">Currently Building</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
-            {[
-              {
-                topic: "Discord Manager",
-                detail: "A discord.js bot that receives GitHub webhooks over HTTP and posts CI results, pushes, and releases to a Discord channel as rich embeds — it powers the build notifications for this site.",
-                color: COLORS.coral,
-                repo: "https://github.com/kyle678-labs/discordManager",
-              },
-            ].map((item, i) => (
-              <div key={i} style={{
-                background: COLORS.surface,
-                border: `1px solid ${COLORS.cardBorder}`,
-                borderRadius: "12px",
-                padding: "20px",
-                borderLeft: `3px solid ${item.color}`,
-              }}>
-                <div style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: "6px" }}>{item.topic}</div>
-                <div style={{ color: COLORS.muted, fontSize: "0.8rem", lineHeight: 1.6 }}>{item.detail}</div>
+        {/* ── IN PROGRESS ── */}
+        <section style={{ paddingTop: "72px" }}>
+          <SectionHead index="04" title="In Progress" note="CURRENTLY BUILDING" c={C} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
+            {building.map((item, i) => (
+              <div key={i} className="entry" style={{ "--edge": C.red } as CSSProperties}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", fontWeight: 700, color: C.red, letterSpacing: "1px", marginBottom: "10px" }}>
+                  ◆ WIP
+                </div>
+                <h3 style={{ margin: "0 0 8px", fontFamily: "'Space Grotesk', sans-serif", fontSize: "1.15rem", fontWeight: 700, letterSpacing: "-0.3px" }}>{item.topic}</h3>
+                <p style={{ margin: "0 0 14px", color: C.mute, fontSize: "0.875rem", lineHeight: 1.6 }}>{item.detail}</p>
                 {item.repo && (
-                  <a href={item.repo} target="_blank" rel="noopener noreferrer" style={{
-                    display: "inline-block",
-                    marginTop: "12px",
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: "0.75rem",
-                    color: item.color,
-                    textDecoration: "none",
-                  }}>View source ↗</a>
+                  <a href={item.repo} target="_blank" rel="noopener noreferrer" className="src" style={{ color: C.ink }}>↗ SOURCE</a>
                 )}
               </div>
             ))}
@@ -431,11 +490,9 @@ export default function App() {
         </section>
 
         {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid ${COLORS.cardBorder}`, paddingTop: "32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem", color: COLORS.subtle }}>
-            <span style={{ ...gradientText }}>Kyle</span> · {new Date().getFullYear()}
-          </span>
-          <span style={{ fontSize: "0.75rem", color: COLORS.subtle }}>Built with React</span>
+        <footer style={{ marginTop: "80px", borderTop: `1px solid ${C.ink}`, paddingTop: "22px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: C.mute, letterSpacing: "0.5px" }}>
+          <span><span style={{ color: C.red, fontWeight: 700 }}>K·T·M</span> — © {new Date().getFullYear()}</span>
+          <span>SELF-HOSTED ON K8S · BUILT WITH REACT</span>
         </footer>
       </div>
     </div>
